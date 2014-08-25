@@ -2,7 +2,7 @@ require "warren/version"
 require "bunny"
 
 module Warren
-  DEFAULT_EXCHANGE_NAME = 'warren'
+  DEFAULT_EXCHANGE_NAME = 'warren-exchange'
 
   class Base
     class << self
@@ -50,13 +50,12 @@ module Warren
       channel = @conn.create_channel
       channel.prefetch(1)
 
-      exchange = channel.topic(Warren::DEFAULT_EXCHANGE_NAME, auto_delete: true)
+      exchange = channel.topic(Warren::DEFAULT_EXCHANGE_NAME, durable: true)
 
       listen_callbacks.each do |name, cbk|
         channel.queue("", durable: true)
                .bind(exchange, routing_key: name)
                .subscribe(ack: true) do |delivery_info, properties, payload|
-
           context = Class.new do
             def trigger(event, payload)
               Warren::Publisher.publish(event, payload)

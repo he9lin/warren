@@ -5,8 +5,8 @@ module Warren
       conn.start
 
       channel  = conn.create_channel
-      exchange = channel.topic(Warren::DEFAULT_EXCHANGE_NAME, auto_delete: true)
-      exchange.publish(payload, routing_key: event)
+      exchange = channel.topic(Warren::DEFAULT_EXCHANGE_NAME, durable: true)
+      exchange.publish(payload, routing_key: event, persistent: true)
 
       conn.close
     end

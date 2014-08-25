@@ -3,12 +3,8 @@ require 'spec_helper'
 describe Warren, 'intergration specs' do
   def run_app_test(klass, &block)
     app = klass.new
-    thread1 = Thread.new { app.start }
-    thread2 = Thread.new {
-      sleep 0.1
-      block.call
-    }
-    thread2.join
+    app.start
+    block.call
     sleep 0.1
     app.stop
   end
