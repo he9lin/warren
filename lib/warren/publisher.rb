@@ -4,10 +4,9 @@ module Warren
       conn = Bunny.new
       conn.start
 
-      channel = conn.create_channel
-      queue   = channel.queue(event, durable: true)
-
-      queue.publish(payload, persistent: true)
+      channel  = conn.create_channel
+      exchange = channel.topic(Warren::DEFAULT_EXCHANGE_NAME, auto_delete: true)
+      exchange.publish(payload, routing_key: event)
 
       conn.close
     end
