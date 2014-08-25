@@ -4,13 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'warren/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "warren"
+  spec.name          = "lh-warren"
   spec.version       = Warren::VERSION
   spec.authors       = ["Lin He"]
   spec.email         = ["he9lin@gmail.com"]
-  spec.summary       = %q{A DSL wrapper around bunny to run distributed and communicating apps.}
-
-  spec.description   = %q{A DSL wrapper around bunny to run distributed and communicating apps.}
+  spec.summary       = %q{A DSL wrapper around bunny to build distributed and communicative apps.}
+  spec.description   = %q{A DSL wrapper around bunny to build distributed and communicative apps.}
   spec.homepage      = "https://bitbucket.org/he9lin/warren"
   spec.license       = "MIT"
 
