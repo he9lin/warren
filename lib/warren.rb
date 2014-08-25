@@ -53,9 +53,9 @@ module Warren
       exchange = channel.topic(Warren::DEFAULT_EXCHANGE_NAME, auto_delete: true)
 
       listen_callbacks.each do |name, cbk|
-        queue = channel.queue("", durable: true)
-                       .bind(exchange, routing_key: name)
-                       .subscribe(ack: true) do |delivery_info, properties, payload|
+        channel.queue("", durable: true)
+               .bind(exchange, routing_key: name)
+               .subscribe(ack: true) do |delivery_info, properties, payload|
 
           context = Class.new do
             def trigger(event, payload)
