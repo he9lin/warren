@@ -39,8 +39,8 @@ module Warren
       end
     end
 
-    def initialize
-      @conn = Bunny.new
+    def initialize(opts={})
+      @conn = Bunny.new(opts)
     end
 
     def start
