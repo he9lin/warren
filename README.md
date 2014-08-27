@@ -27,7 +27,7 @@ class DataAnalysisReporter < Warren::Base
   end
 end
 
-WarrenRunner.run(data_analysis_reporter)
+DataAnalysisReporter.new.start
 
 class UnifiedEventLogger < Warren::Base
   listen 'tarofy.data_analysis.*' do |*args|
@@ -60,6 +60,9 @@ class TaroStatsRunner < Warren::Base
   end
 end
 ```
+## TODO
+
+* Add connection error handling
 
 ## Contributing
 
