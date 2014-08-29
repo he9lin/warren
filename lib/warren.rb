@@ -2,42 +2,18 @@ require "warren/version"
 require "bunny"
 
 module Warren
+  require_relative 'warren/dsl'
+
   DEFAULT_EXCHANGE_NAME = 'warren-exchange'
 
-  class Base
-    class << self
-      def configure(&block)
-        configurations << block
-      end
-
-      def configurations
-        @_configurations ||= []
-      end
-
-      def listen(name, &block)
-        listen_callbacks[name] = block
-      end
-
-      def listen_callbacks
-        @_listen_callbacks ||= {}
-      end
-
-      def helper(&block)
-        helpers << Module.new(&block)
-      end
-
-      def helpers
-        @_helpers ||= []
-      end
-
-      def set(name, &block)
-        mod = Module.new
-        mod.module_eval do
-          define_method name, &block
-        end
-        helpers << mod
-      end
+  module EventTriggerable
+    def trigger(event, payload)
+      Warren::Publisher.publish(event, payload)
     end
+  end
+
+  class Base
+    extend Dsl
 
     def initialize(opts={})
       @conn = Bunny.new(opts)
@@ -56,11 +32,8 @@ module Warren
         channel.queue("", durable: true)
                .bind(exchange, routing_key: name)
                .subscribe(ack: true) do |delivery_info, properties, payload|
-          context = Class.new do
-            def trigger(event, payload)
-              Warren::Publisher.publish(event, payload)
-            end
-          end
+          context = Class.new
+          context.send :include, EventTriggerable
           context.class_eval { define_method(:call, &cbk) }
           helpers.each { |h| context.send :include, h }
 

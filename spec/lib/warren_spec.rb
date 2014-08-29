@@ -32,7 +32,7 @@ describe Warren, 'intergration specs' do
     expect(result2).to eq(['data', 'log'])
   end
 
-  it 'has helpers' do
+  it 'has block helper' do
     result = nil
 
     klass = Class.new(Warren::Base) do
@@ -41,6 +41,28 @@ describe Warren, 'intergration specs' do
           "run #{payload}"
         end
       end
+
+      listen 'analysis.dataready' do |delivery_info, properties, payload|
+        result = run_analysis(payload)
+      end
+    end
+
+    run_app_test(klass) do
+      Warren::Publisher.publish('analysis.dataready', 'data')
+    end
+
+    expect(result).to eq('run data')
+  end
+
+  it 'has module helper' do
+    result = nil
+
+    klass = Class.new(Warren::Base) do
+      helper(Module.new do
+        def run_analysis(payload)
+          "run #{payload}"
+        end
+      end)
 
       listen 'analysis.dataready' do |delivery_info, properties, payload|
         result = run_analysis(payload)
